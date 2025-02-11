@@ -386,7 +386,7 @@ public class FastjsonExample {
 
 ## NIO如何实现
 
-![1](.\java基础res\1.png)
+![1](.\01-java基础res\1.png)
 
 每个客户端通过通道（Channel）与服务端进行数据交互，客户端通过端口向服务端发送连接请求。服务端使用一个线程，通过多路复用器（Selector）来监听多个客户端的连接请求和数据事件，服务端会将每个客户端的通道注册到 Selector 上进行管理。
 
