@@ -1,3 +1,5 @@
+# Java基础面试篇
+
 # 概念
 
 ## Java特点
@@ -195,6 +197,16 @@ new出来的对象由GC进行回收，根据一下算法进行检测：
 - 引用计数法：为每个对象维护一个引用计数器，当对象被引用时加1，取消引用时减1。
 - 可达性分析法：可达性分析将对象分类两类：垃圾回收的根对象GCRoot和普通对象，如果某个到GCRoot对象是可达的那么这个对象就不可回收。
 
+GCRoot包括：1、线程 2、应用类加载器所加载的java.lang.Class对象 3、监视器对象，用来监视同步锁synchronized
+
+## final在java中有什么用
+
+- **变量**：一旦赋值后不能更改。
+
+- **方法**：不能被重写。
+
+- **类**：不能被继承。
+
 # 反射
 
 ## 什么是反射
@@ -251,6 +263,33 @@ new出来的对象由GC进行回收，根据一下算法进行检测：
 # 注解
 
 注解可以作用在类上、方法上、字段上。注解的本质时继承了Annotation的特殊接口，具体实现时java运行时生成的动态代理。
+
+## 四种标准原注解
+
+**`@Retention`**
+用来定义注解的生命周期，即注解在哪个阶段可用。
+
+- `RetentionPolicy.SOURCE`：注解仅在源代码中存在，编译时会被丢弃。
+- `RetentionPolicy.CLASS`：注解在编译后保留在字节码中，但不会在运行时可见（默认策略）。
+- `RetentionPolicy.RUNTIME`：注解会保留在字节码中，并且在运行时可通过反射访问。
+
+**`@Target`**
+用来指定注解可以应用的 Java 元素类型（如类、方法、字段等）。
+
+- `ElementType.TYPE`：注解可用于类、接口或枚举。
+- `ElementType.FIELD`：注解可用于字段。
+- `ElementType.METHOD`：注解可用于方法。
+- `ElementType.PARAMETER`：注解可用于方法参数。
+- `ElementType.CONSTRUCTOR`：注解可用于构造函数。
+- `ElementType.LOCAL_VARIABLE`：注解可用于局部变量。
+- `ElementType.ANNOTATION_TYPE`：注解可用于其他注解类型。
+- `ElementType.PACKAGE`：注解可用于包。
+
+**`@Inherited`**
+用于标记注解是否可以被继承。如果一个注解标记了 `@Inherited`，则该注解会被应用到该类的子类上（仅适用于类级别的注解）。
+
+**`@Documented`**
+表示该注解应该包含在 Javadoc 中。也就是说，当生成 Javadoc 时，使用该注解的类、方法等会在文档中显示出来。
 
 # 异常
 
@@ -343,7 +382,7 @@ public class FastjsonExample {
 
 ​	缺点：每个线程所对应的对象无论是否创建都会拿锁，性能较差
 
-- volatile+更细粒度的锁
+- volatile+更细粒度的锁  **Double-check**
 
   ```java
   public class Singleton {

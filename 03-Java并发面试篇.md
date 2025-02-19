@@ -1,3 +1,5 @@
+# Java并发面试篇
+
 # 多线程
 
 ## java里面的线程和操作系统的线程一样吗？
@@ -15,7 +17,7 @@
 
 - 事务：使用事务（事务属性：ACID原子性、一致性、隔离性、持久性）来控制一系列操作，要么都成功要么都失败回滚。
 - 锁：悲观锁
-- 版本控制：乐观锁
+- MVCC版本控制：乐观锁
 
 ## 创建线程的方法
 
@@ -299,7 +301,7 @@ ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
                                              32, // 最大*2
                                              10, // 非核心线程空闲10s回收
                                              TimeUnit.SECONDS,
-                                             new SynchronousQueue<>(), //不缓存任务，直接扩容
+                                             new SynchronousQueue<>(), //不缓存任务，直接消费
                                              new AbortPolicy() // 直接拒绝
                                  );
 ```

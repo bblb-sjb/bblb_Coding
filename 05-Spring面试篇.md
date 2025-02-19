@@ -1,3 +1,5 @@
+# Spring面试篇
+
 # Spring
 
 ## Spring框架的核心特性
@@ -51,7 +53,7 @@ Spring IOC 通过反射+工厂模式实现对象创建、管理和依赖注入�
 
   - 扫描指定包路径（`ClassPathBeanDefinitionScanner`）。
   - 解析 `@Component` 注解的类，生成 `BeanDefinition`（但此时 Bean 还未实例化）。
-  - 注册 `BeanDefinition` 到 `BeanFactory`，等待后续实例化。
+  - 注册 `BeanDefinition` 到 `BeanFactory`，等待后续实例化，也就是放入三级缓存BeanFactory。
 
 - 依赖注入（Dependency Injection, DI）
 
@@ -91,6 +93,13 @@ AOP 允许我们在不修改业务逻辑的情况下，添加额外功能，如�
 - **代理对象（Proxy）**：Spring AOP 通过 JDK 动态代理或 CGLIB 代理 生成代理对象，并在代理对象的方法调用前后插入增强逻辑。
 
 - **目标对象（Target）**：实际被代理的业务对象。
+
+### 静态代理和动态代理
+
+- **静态代理**：适用于代理对象不多、代理关系在编译时就能确定的简单场景。
+  - 代理类与目标类之间有直接的关系，需要在编译时就确定。
+  - 每个类都需要一个代理类，无法在运行时动态生成。
+- **动态代理**：适用于代理对象较多，且在运行时需要动态生成代理类的复杂场景，如 AOP、事务管理、缓存等。
 
 ### AOP代理方式
 
@@ -199,6 +208,12 @@ Spring 采用"三级缓存"机制来解决Setter / 字段注入形式的循环�
 - MVC中：
   - `@Controller`, `@RequestMapping`, `@GetMapping`等
 
+## autowired和resource的区别
+
+**`@Autowired`**：Spring 特有，用于自动根据类型注入 Bean。通常更常用，支持灵活的自动注入。
+
+**`@Resource`**：JSR-250 标准，优先根据名称注入，如果没有匹配的名称，再根据类型注入。
+
 ## Spring的事务什么情况下会失效？
 
 - 未捕获异常：如果一个事务方法中发生了未捕获的异常，并且异常未被处理或传播到事务边界之外，那么事务会失效，所有的数据库操作会回滚。
@@ -272,7 +287,7 @@ public class MyController {
 ## 为什么使用springboot
 
 - **自动配置（Auto Configuration）**
-  - Spring：在Spring，员需要手动配置大量的 XML 配置文件，或者使用 Java 配置类进行大量的配置。
+  - Spring：在Spring需要手动配置大量的 XML 配置文件，或者使用 Java 配置类进行大量的配置。
   - Spring Boot：通过自动配置，Spring Boot 会根据项目的依赖和环境自动配置相关组件，减少了大量的配置工作。例如，Spring Boot 可以自动配置数据库连接池、嵌入式服务器（如 Tomcat）、JPA 等，开发者不需要显式地定义它们。
 
 - **内嵌Web服务器**
@@ -464,7 +479,7 @@ Springboot的启动类都会有`@SpringBootApplication`这个注解，这个注�
 
 ## Springboot中的注解
 
-- **@SpringBootApplication**：用于标注主应用程序类，标识一个Spring Boot应用程序的入口点，同时启用自动配置和组件扫描。
+- **@SpringBootApplication**：用于标注主应用程序类，标识一个Spring Boot应用程序的入口点，同时启用自动配置和组件扫描。**默认情况下，Spring 会扫描启动类所在包及其子包中的所有组件。**
 - **@Controller**：标识控制器类，处理HTTP请求。
 - **@RestController**：结合@Controller和@ResponseBody，返回RESTful风格的数据。
 - **@Service**：标识服务类，通常用于标记业务逻辑层。
@@ -555,6 +570,28 @@ Spring Boot是用于构建单个Spring应用的框架，而Spring Cloud则是用
 
 - **Sentinel**：流量控制 & 熔断限流，提供高可用保护，防止雪崩效应。
 
+## rpc框架有那些
+
+RPC（Remote Procedure Call，远程过程调用）框架用于在分布式系统中实现不同节点间的通信。通过 RPC，客户端可以像调用本地方法一样调用远程服务器上的方法。常见的 RPC 框架有很多，以下是一些常用的 RPC 框架：
+
+- **gRPC**：高效、支持流的 RPC 框架，基于 HTTP/2 和 Protocol Buffers。
+
+- **Dubbo**：阿里巴巴开源的高性能 RPC 框架，支持分布式服务治理。
+
+- **Spring RMI**：基于 Java 的远程方法调用（RMI）机制，适用于 Spring。
+
+- **Thrift**：由 Facebook 开发，支持跨语言的 RPC 框架。
+
+- **OpenFeign**：Spring Cloud 的声明式 HTTP 客户端，简化微服务间的通信。
+
+## OpenFeign原理
+
+OpenFeign 通过 **动态代理** 实现远程调用：
+
+1. **接口定义**：定义一个接口，使用 Feign 注解（如 `@GetMapping`、`@PostMapping`）。
+2. **代理生成**：Feign 会为这个接口创建一个动态代理。
+3. **远程调用**：当调用接口方法时，Feign 会自动生成 HTTP 请求，并将响应返回给调用者。
+
 ## 负载均衡算法
 
 Nginx 负载均衡算法主要用于将流量分发到多个后端服务器，提高系统的吞吐量和可用性。
@@ -587,7 +624,14 @@ Nginx 负载均衡算法主要用于将流量分发到多个后端服务器，�
   - 优点：服务器异常时，自动切换到健康的服务器，提高系统可用性。
   - 缺点：需要配合 `proxy_next_upstream` 进一步优化容错机制。
 
-  
+
+## SpringCloudAlibaba主要包括那些
+
+- **Nacos**（服务注册与配置管理）
+- **RocketMQ**（消息队列）
+- **Sentinel**（流量控制与熔断降级）
+- **Dubbo**（高性能 RPC 框架）
+- **Seata**（分布式事务）
 
 
 
